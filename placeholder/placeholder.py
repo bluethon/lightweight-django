@@ -4,8 +4,12 @@
 # @Author   : Bluethon (j5088794@gmail.com)
 # @Link     : http://github.com/bluethon
 
+import hashlib
 import os
 import sys
+
+from io import BytesIO
+from PIL import Image, ImageDraw
 
 from django.conf import settings
 
@@ -29,11 +33,10 @@ settings.configure(
 
 from django import forms
 from django.conf.urls import url
+from django.core.cache import cache
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse, HttpResponseBadRequest
-
-from io import BytesIO
-from PIL import Image, ImageDraw
+from django.views.decorators.http import etag
 
 
 class ImageForm(forms.Form):
@@ -46,17 +49,23 @@ class ImageForm(forms.Form):
         """Generate an image of the given type and return as raw bytes."""
         height = self.cleaned_data['height']
         width = self.cleaned_data['width']
-        image = Image.new('RGB', (width, height))
-        draw = ImageDraw.Draw(image)
-        text = '{} X {}'.format(width, height)
-        textwidth, textheight = draw.textsize(text)
-        if textwidth < width and textheight < height:
-            texttop = (height - textheight) // 2
-            textleft = (width - textwidth) // 2
-            draw.text((textleft, texttop), text, fill=(255, 255, 255))
-        content = BytesIO()
-        image.save(content, image_format)
-        content.seek(0)
+        key = '{}.{}.{}'.format(width, height, image_format)
+        content = cache.get(key)
+        if content is None:
+            image = Image.new('RGB', (width, height))
+            draw = ImageDraw.Draw(image)
+            text = '{} X {}'.format(width, height)
+            textwidth, textheight = draw.textsize(text)
+            if textwidth < width and textheight < height:
+                texttop = (height - textheight) // 2
+                textleft = (width - textwidth) // 2
+                draw.text((textleft, texttop), text, fill=(255, 255, 255))
+            content = BytesIO()
+            image.save(content, image_format)
+            # 将读取指针移动到0(即文件头部)位置
+            content.seek(0)
+            #                       = 1 hour
+            cache.set(key, content, 60 * 60)
         return content
 
 
