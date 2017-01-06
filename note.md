@@ -12,7 +12,7 @@ Cmd Note
 
 **注意模板使用{{ secret_key }}**
 
-    django-admin.py startproject foo --template=project_name
+    django-admin.py startproject <foo> --template=project_name
 
 ### use Gunicorn and set output to console
 
