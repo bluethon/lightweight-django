@@ -4,3 +4,4 @@ packaging==16.8
 pip-review==0.5
 pyparsing==2.1.10
 six==1.10.0
+Pillow==4.0.0
