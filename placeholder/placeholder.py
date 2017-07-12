@@ -50,7 +50,7 @@ class ImageForm(forms.Form):
         height = self.cleaned_data['height']
         width = self.cleaned_data['width']
         key = '{}.{}.{}'.format(width, height, image_format)
-        content = cache.get(key)
+        content = cache.get(key)  # 使用Django的cache, 不重复生成图片, 节省CPU
         if content is None:
             image = Image.new('RGB', (width, height))
             draw = ImageDraw.Draw(image)
@@ -65,14 +65,25 @@ class ImageForm(forms.Form):
             # 将读取指针移动到0(即文件头部)位置
             content.seek(0)
             #                       = 1 hour
-            cache.set(key, content, 60 * 60)
+            cache.set(key, content, 60 * 60)  # 缓存图片
+        # return contents as bytes
         return content
 
 
+def generate_etag(request, width, height):
+    """ :return ETag value """
+    content = f'Placeholder: {width} x {height}'
+    return hashlib.sha1(content.encode('utf-8')).hexdigest()
+
+
+# 如果浏览器请求匹配到ETag, 浏览器会收到304 Not Modified 响应
+# 浏览器会使用cache, 节省带宽和生成响应的时间
+@etag(generate_etag)
 def placeholder(request, width, height):
     form = ImageForm({'height': height, 'width': width, })
     if form.is_valid():
         image = form.generate()
+        # image content is sent to the client without writing it to the disk
         return HttpResponse(image, content_type='image/png')
     else:
         return HttpResponseBadRequest('Invalid Image Request')
@@ -83,7 +94,7 @@ def index(request):
 
 
 urlpatterns = (
-    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)/$', placeholder, name='placeholder'),
+    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)/$', placeholder, name='placeholder'),  # /image/30x25/
     url(r'^$', index, name='homepage'),
 )
 

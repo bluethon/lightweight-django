@@ -1,7 +1,7 @@
 Cmd Note
 =========
 
-### Set envirn
+### Set environ
 
     export DEBUG=on
     unset DEBUG
