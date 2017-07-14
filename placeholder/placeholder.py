@@ -17,7 +17,9 @@ DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'rp_(%n96486n4nv1-kwg=_c_utvt(7!dulr+wbm9xm*yf=5qk*')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+BASE_DIR = os.path.dirname(__file__)
 
 settings.configure(
     DEBUG=DEBUG,
@@ -29,13 +31,28 @@ settings.configure(
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ),
+    INSTALLED_APPS=(
+        'django.contrib.staticfiles',
+    ),
+    TEMPLATES=(
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': (os.path.join(BASE_DIR, 'templates'), ),
+        },
+    ),
+    STATICFILES_DIRS=(
+        os.path.join(BASE_DIR, 'static'),
+    ),
+    STATIC_URL='/static/',
 )
 
 from django import forms
 from django.conf.urls import url
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import render
 from django.views.decorators.http import etag
 
 
@@ -80,7 +97,7 @@ def generate_etag(request, width, height):
 # 浏览器会使用cache, 节省带宽和生成响应的时间
 @etag(generate_etag)
 def placeholder(request, width, height):
-    form = ImageForm({'height': height, 'width': width, })
+    form = ImageForm({'height': height, 'width': width})
     if form.is_valid():
         image = form.generate()
         # image content is sent to the client without writing it to the disk
@@ -90,7 +107,13 @@ def placeholder(request, width, height):
 
 
 def index(request):
-    return HttpResponse('Hello World')
+    # 生成path
+    example = reverse('placeholder', kwargs={'width': 50, 'height': 50})
+    context = {
+        # 拼接domain部分
+        'example': request.build_absolute_uri(example)
+    }
+    return render(request, 'home.html', context)
 
 
 urlpatterns = (
