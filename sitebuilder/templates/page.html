@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}
-    {# 继承base中的值        capitalize the first character #}
-    {{ block.super }} - {{ slug|capfirst }}
-{% endblock title %}
+{# 继承base中的值        capitalize the first character #}
+{% block title %}{{ block.super }} - {{ slug|capfirst }}{% endblock title %}
+
+{% block body-id %}{{ slug|slugify }}{% endblock body-id %}
 
 {% block content %}
     {% include page %}

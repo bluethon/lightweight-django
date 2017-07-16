@@ -5,11 +5,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Rapid Prototypes {% endblock title %}</title>
+    <title>{% block title %}Rapid Prototypes{% endblock title %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
 </head>
-<body>
+<body id="{% block body-id %}body{% endblock body-id %}">
+    {% block top-nav-wrapper %}
+        {#          导航    反转为黑色       默认body顶端30px, 修复 #}
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand">Rapid Prototypes</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li {% if slug == 'index' %}class="active"{% endif %}>
+                            <a href="/">Home</a>
+                        </li>
+                        <li {% if slug == 'contact' %}class="active"{% endif %}>
+                            <a href="{% url 'page' 'contact' %}">Contact</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li {% if slug == 'login' %}class="active" {% endif %}>
+                            <a href="{% url 'page' 'login' %}">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endblock top-nav-wrapper %}
     {% block content %}
     {% endblock content %}
     <script src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
