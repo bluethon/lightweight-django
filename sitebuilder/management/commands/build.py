@@ -9,7 +9,7 @@ import shutil
 
 from django.conf import settings
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 
@@ -29,6 +29,15 @@ class Command(BaseCommand):
         # python prototypes.py build        # build == file name
         # cd _build
         # python -m http.server 9000        # run simple python server
+
+        if args:
+            pages = args
+            avaiable = list(get_pages())
+            invalid = []
+            for page in pages:
+                if page not in avaiable:
+                    
+
 
         # 如果存在文件夹, 删除
         if os.path.exists(settings.SITE_OUTPUT_DIRECTORY):
