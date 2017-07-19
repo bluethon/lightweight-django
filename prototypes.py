@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(__file__)
 
 settings.configure(
     DEBUG=True,
-    SECRET_KEY='hardtoseepw',
+    SECRET_KEY='9adr8to-se-pw',
     ROOT_URLCONF='sitebuilder.urls',
     MIDDLEWARE_CLASSES=(),
     INSTALLED_APPS=(
@@ -32,6 +32,8 @@ settings.configure(
     SITE_PAGES_DIRECTORY=os.path.join(BASE_DIR, 'pages'),
     SITE_OUTPUT_DIRECTORY=os.path.join(BASE_DIR, '_build'),
     STATIC_ROOT=os.path.join(BASE_DIR, '_build', 'static'),
+    # 文件获得唯一hash(DEBUG=False生效)
+    STATICFILES_STORAGE='django.contrib.staticfiles.storage.CachedStaticFilesStorage',
 )
 
 if __name__ == '__main__':

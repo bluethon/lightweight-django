@@ -39,6 +39,8 @@ class Command(BaseCommand):
         # cd _build
         # python -m http.server 9000        # run simple python server
         
+        settings.DEBUG = False
+        
         # 参数存在, 可为多个
         if args:
             pages = args
