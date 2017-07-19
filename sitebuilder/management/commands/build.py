@@ -40,6 +40,7 @@ class Command(BaseCommand):
         # python -m http.server 9000        # run simple python server
         
         settings.DEBUG = False
+        settings.COMPRESS_ENABLED = True
         
         # 参数存在, 可为多个
         if args:
@@ -64,6 +65,7 @@ class Command(BaseCommand):
         
         # 调用`collectstatic`命令收集static文件
         call_command('collectstatic', interactive=False, clear=True, verbosity=0)
+        call_command('compress', interactive=False, force=True)     # 压缩静态文件
         
         client = Client()
         # 遍历pages, 收集所有html

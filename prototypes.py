@@ -20,6 +20,7 @@ settings.configure(
         'django.contrib.staticfiles',
         # 'django.contrib.webdesign',       # deprecated in 1.8, {% lorem %} built in
         'sitebuilder',
+        'compressor',               # static file compress
     ),
     TEMPLATES=(
         {
@@ -32,8 +33,14 @@ settings.configure(
     SITE_PAGES_DIRECTORY=os.path.join(BASE_DIR, 'pages'),
     SITE_OUTPUT_DIRECTORY=os.path.join(BASE_DIR, '_build'),
     STATIC_ROOT=os.path.join(BASE_DIR, '_build', 'static'),
-    # 文件获得唯一hash(DEBUG=False生效)
-    STATICFILES_STORAGE='django.contrib.staticfiles.storage.CachedStaticFilesStorage',
+    # # 文件获得唯一hash(DEBUG=False生效)
+    # STATICFILES_STORAGE='django.contrib.staticfiles.storage.CachedStaticFilesStorage',
+    # settings for django-compressor
+    STATICFILES_FINDERS=(
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+        'compressor.finders.CompressorFinder',
+    )
 )
 
 if __name__ == '__main__':
