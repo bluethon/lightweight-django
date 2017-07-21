@@ -4,12 +4,14 @@
 # @Author   : Bluethon (j5088794@gmail.com)
 # @Link     : http://github.com/bluethon
 
+import json
 import os
 
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
-from django.template import Template
+from django.template import Template, Context
+from django.template.loader_tags import BlockNode
 # noinspection PyProtectedMember
 from django.utils._os import safe_join
 
@@ -29,10 +31,17 @@ def get_page_or_404(name):
         # noinspection PyShadowingNames
         # instantiates Django template object
         page = Template(f.read())
-
+    
+    meta = None
+    for i, node in enumerate(list(page.nodelist)):
+        if isinstance(node, BlockNode) and node.name == 'context':
+            meta = page.nodelist.pop(i)
+            break
+    page._meta = meta
     return page
 
 
+# noinspection PyUnresolvedReferences,PyUnresolvedReferences,PyProtectedMember
 def page(request, slug='index'):
     """ Render the requested page if found. """
     file_name = f'{slug}.html'
@@ -42,4 +51,8 @@ def page(request, slug='index'):
         'slug': slug,
         'page': page,
     }
+    if page._meta is not None:
+        meta = page._meta.render(Context())     # SafeText
+        extra_context = json.loads(meta)        # dict
+        context.update(extra_context)
     return render(request, 'page.html', context)
