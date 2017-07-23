@@ -3,3 +3,7 @@ gunicorn
 pip-tools
 pillow
 django-compressor
+djangorestframework
+Markdown
+django-filter
+mysqlclient
