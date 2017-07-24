@@ -23,22 +23,21 @@ class DefaultsMixin(object):
 
 class SprintViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """ API endpoint for listing and creating sprints. """
-
+    
     queryset = Sprint.objects.order_by('end')
     serializer_class = SprintSerializer
 
 
 class TaskViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """ API endpoint for listing and creating tasks. """
-
+    
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
 
-
 class UserViewSet(DefaultsMixin, viewsets.ReadOnlyModelViewSet):
     """ API endpoint for listing users. """
-
+    
     lookup_field = User.USERNAME_FIELD
     lookup_url_kwarg = User.USERNAME_FIELD
     queryset = User.objects.order_by(User.USERNAME_FIELD)
