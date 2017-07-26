@@ -17,8 +17,8 @@ class SprintSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Sprint
-        # fields = ('id', 'name', 'description', 'end', 'links',)
-        fields = '__all__'
+        fields = ('id', 'name', 'description', 'end', 'links', 'url',)
+        # fields = '__all__'
     
     def get_links(self, obj):
         request = self.context['request']
@@ -39,7 +39,8 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'sprint',
                   'status', 'status_display', 'order',
                   'assigned', 'started', 'due', 'completed', 'links', 'url', )
-    
+
+    # TODO: need
     # noinspection PyMethodMayBeStatic
     def get_status_display(self, obj):
         return obj.get_status_display()
