@@ -7,3 +7,5 @@ djangorestframework
 Markdown
 django-filter
 mysqlclient
+requests
+ipython

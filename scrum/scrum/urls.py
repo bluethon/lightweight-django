@@ -6,5 +6,5 @@ from board.urls import router
 
 urlpatterns = [
     url(r'^api/token/', obtain_auth_token, name='api-token'),
-    url(r'api/', include(router.urls))
+    url(r'^api/', include(router.urls))
 ]

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import authentication, permissions, viewsets, filters
 
-from .forms import TaskFilter
+from .forms import TaskFilter, SprintFilter
 from .models import Sprint, Task
 from .serializers import SprintSerializer, TaskSerializer, UserSerializer
 
@@ -10,11 +10,11 @@ User = get_user_model()
 
 class DefaultsMixin(object):
     """ Default settings for view authentication, permission, filtering and pagination. """
-    authentication_class = (
+    authentication_classes = (
         authentication.BasicAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_class = (
+    permission_classes = (
         permissions.IsAuthenticated,
     )
     paginate_by = 25
@@ -32,6 +32,7 @@ class SprintViewSet(DefaultsMixin, viewsets.ModelViewSet):
     
     queryset = Sprint.objects.order_by('end')
     serializer_class = SprintSerializer
+    filter_class = SprintFilter
     search_fields = ('name',)
     ordering_fields = ('end', 'name',)
 
