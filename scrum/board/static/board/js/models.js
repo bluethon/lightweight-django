@@ -23,6 +23,7 @@
         return cookieValue;
     }
 
+    // 自调用,
     // Setup jQuery ajax calls to handle CSRF
     $.ajaxPrefilter(function (settings, originalOptions, xhr) {
         var csrftoken;
