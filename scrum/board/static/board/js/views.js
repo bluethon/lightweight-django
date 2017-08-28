@@ -18,11 +18,12 @@
     var FormView = TemplateView.extend({
         events: {
             // 监听(listen)所有 form的submit, 执行submit回调(callback)
-            'submit form': 'submit'
+            'submit form': 'submit',
+            // 'submit': 'submit'
         },
         errorTemplate: _.template('<span class="error"><%- msg %></span>'),
         clearErrors: function () {
-            $('.error', this.form.remove());
+            $('.error', this.form).remove();
         },
         showErrors: function (errors) {
             // TODO: Show the errors from the response
@@ -74,7 +75,7 @@
         templateName: '#home-template'
     });
 
-    var LoginView = TemplateView.extend({
+    var LoginView = FormView.extend({
         id: 'login',
         templateName: '#login-template',
         // errorTemplate: _.template('<span class="error"><%- msg %></span>'),
@@ -96,10 +97,15 @@
             // js没有super, 但是下面语句等价调用了父方法
             FormView.prototype.submit.apply(this, arguments);
             data = this.serializeForm(this.form);
+            // this.clearErrors();
+            // data = {
+            //     username: $(':input[name="username"]', this.form).val(),
+            //     password: $(':input[name="password"]', this.form).val()
+            // };
 
             $.post(app.apiLogin, data)
             // $.proxy(), 接受一个函数，然后返回一个新函数，并且这个新函数始终保持了特定的上下文语境
-                .success($.proxy(this.loginSuccess, this))
+                .done($.proxy(this.loginSuccess, this))
                 .fail($.proxy(this.failure, this));
         },
         loginSuccess: function (data) {
